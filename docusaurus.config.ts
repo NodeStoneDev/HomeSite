@@ -14,8 +14,12 @@ const config: Config = {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
 
-  url: 'https://nodestone.io',
+  // GitHub Pages（用户/组织站点仓库 NodeStoneDev/nodestonedev.github.io）
+  url: 'https://nodestonedev.github.io',
   baseUrl: '/',
+  organizationName: 'NodeStoneDev',
+  projectName: 'nodestonedev.github.io',
+  trailingSlash: false,
 
   onBrokenLinks: 'throw',
 
