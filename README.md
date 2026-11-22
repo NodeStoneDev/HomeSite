@@ -52,11 +52,28 @@ static/brand/              品牌资产（字标、方块、favicon 等）
 1. **Settings → Pages → Build and deployment → Source** 选 **GitHub Actions**（不要选 "Deploy from a branch"）。
 2. 确认组织下已允许 Actions 运行，且 `github-pages` 环境无额外的审批限制。
 
-站点地址由 `docusaurus.config.ts` 的 `url` / `baseUrl` 决定，当前为
-`https://nodestonedev.github.io/`。若日后绑定自定义域名（如 `nodestone.io`），需要同时：
+站点对外域名是 **`https://nodestone.asxz.one/`**，但内容仍由 GitHub Pages 托管，
+只是前面挂了一层 Cloudflare DNS 的 CNAME：
 
-- 在 Pages 设置里填写 Custom domain，并把 `static/CNAME` 提进仓库；
-- 把 `url` 改成 `https://nodestone.io`（`baseUrl` 保持 `/`），否则 sitemap 与 canonical 会指向旧域名。
+```
+浏览器 → nodestone.asxz.one（Cloudflare DNS，asxz.one 区）
+        → CNAME → nodestonedev.github.io（GitHub Pages，证书由 GitHub 签发）
+```
+
+涉及三处，改域名时必须一起改：
+
+| 位置 | 当前值 |
+| --- | --- |
+| `docusaurus.config.ts` 的 `url` | `https://nodestone.asxz.one`（`baseUrl` 保持 `/`） |
+| 仓库 Settings → Pages → Custom domain | `nodestone.asxz.one`（同时把 `static/CNAME` 提进仓库，构建产物里会自动带上） |
+| Cloudflare DNS（asxz.one 区） | `CNAME nodestone → nodestonedev.github.io`，**代理必须关闭（灰色云，仅 DNS）** |
+
+代理一旦打开（橙色云），GitHub 的 Let's Encrypt 证书签发会失败；等 Pages 显示
+"Certificate issued" 后再回 Pages 勾上 **Enforce HTTPS**。
+
+注意：Cloudflare 上 `asxz.one` 的 API Token（wrangler 登录用的那个）只有 `zone:read`，
+**没有 DNS 写权限**，所以 DNS 记录只能在 Cloudflare 控制台手工加，或者另配一个带
+`Zone.DNS:Edit` 的 API Token。
 
 ## 内容来源
 

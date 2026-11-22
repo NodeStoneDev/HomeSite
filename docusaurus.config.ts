@@ -14,8 +14,10 @@ const config: Config = {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
 
-  // GitHub Pages（用户/组织站点仓库 NodeStoneDev/nodestonedev.github.io）
-  url: 'https://nodestonedev.github.io',
+  // 站点仍发布在 GitHub Pages（NodeStoneDev/nodestonedev.github.io），
+  // 对外域名是 Cloudflare 上 asxz.one 的 CNAME：nodestone.asxz.one -> nodestonedev.github.io
+  // 域名改动要同步：这里 url + static/CNAME + 仓库 Pages 的 Custom domain
+  url: 'https://nodestone.asxz.one',
   baseUrl: '/',
   organizationName: 'NodeStoneDev',
   projectName: 'nodestonedev.github.io',
