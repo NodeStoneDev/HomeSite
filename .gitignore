@@ -18,3 +18,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# 本机代理笔记，不进版本库
+AGENTS.md
