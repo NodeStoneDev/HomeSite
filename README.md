@@ -37,6 +37,27 @@ src/theme/Root.tsx         全局挂载点
 static/brand/              品牌资产（字标、方块、favicon 等）
 ```
 
+## 部署
+
+仓库：[NodeStoneDev/nodestonedev.github.io](https://github.com/NodeStoneDev/nodestonedev.github.io)
+（GitHub Pages 的「组织站点」仓库）。推送到 `main` 即自动构建并发布。
+
+| 工作流 | 触发 | 动作 |
+| --- | --- | --- |
+| `.github/workflows/deploy.yml` | push 到 `main`、手动 | `npm ci` → `tsc --noEmit` → `npm run build` → 上传并部署到 Pages |
+| `.github/workflows/ci.yml` | PR、非 `main` 分支 push | 同上但不发布 |
+
+首次启用需要在仓库里做两件事：
+
+1. **Settings → Pages → Build and deployment → Source** 选 **GitHub Actions**（不要选 "Deploy from a branch"）。
+2. 确认组织下已允许 Actions 运行，且 `github-pages` 环境无额外的审批限制。
+
+站点地址由 `docusaurus.config.ts` 的 `url` / `baseUrl` 决定，当前为
+`https://nodestonedev.github.io/`。若日后绑定自定义域名（如 `nodestone.io`），需要同时：
+
+- 在 Pages 设置里填写 Custom domain，并把 `static/CNAME` 提进仓库；
+- 把 `url` 改成 `https://nodestone.io`（`baseUrl` 保持 `/`），否则 sitemap 与 canonical 会指向旧域名。
+
 ## 内容来源
 
 `docs/compass/` 下的四篇协议文档来自协议仓库 [Compass](../Compass)（`docs/` 目录），
