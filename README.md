@@ -39,41 +39,39 @@ static/brand/              品牌资产（字标、方块、favicon 等）
 
 ## 部署
 
-仓库：[NodeStoneDev/nodestonedev.github.io](https://github.com/NodeStoneDev/nodestonedev.github.io)
-（GitHub Pages 的「组织站点」仓库）。推送到 `main` 即自动构建并发布。
+仓库：[NodeStoneDev/nodestonedev.github.io](https://github.com/NodeStoneDev/nodestonedev.github.io)。
+内容托管在 **Cloudflare Pages** 项目 `nodestone`，对外域名 **https://nodestone.asxz.one/**。
+
+链路：
+
+```
+浏览器 → nodestone.asxz.one（asxz.one 区，CNAME → nodestone.pages.dev）
+        → nodestone.pages.dev（Cloudflare Pages，证书由 Cloudflare 签发）
+```
 
 | 工作流 | 触发 | 动作 |
 | --- | --- | --- |
-| `.github/workflows/deploy.yml` | push 到 `main`、手动 | `npm ci` → `tsc --noEmit` → `npm run build` → 上传并部署到 Pages |
-| `.github/workflows/ci.yml` | PR、非 `main` 分支 push | 同上但不发布 |
+| `.github/workflows/ci.yml` | PR、非 `main` 分支 push | `npm ci` → `tsc --noEmit` → `npm run build`，只校验不发布 |
 
-首次启用需要在仓库里做两件事：
+本地发布的步骤（需要已 `wrangler login` 的账号，且该账号有 `pages:write`）：
 
-1. **Settings → Pages → Build and deployment → Source** 选 **GitHub Actions**（不要选 "Deploy from a branch"）。
-2. 确认组织下已允许 Actions 运行，且 `github-pages` 环境无额外的审批限制。
-
-站点对外域名是 **`https://nodestone.asxz.one/`**，但内容仍由 GitHub Pages 托管，
-只是前面挂了一层 Cloudflare DNS 的 CNAME：
-
-```
-浏览器 → nodestone.asxz.one（Cloudflare DNS，asxz.one 区）
-        → CNAME → nodestonedev.github.io（GitHub Pages，证书由 GitHub 签发）
+```bash
+npm run build
+wrangler pages deploy build --project-name=nodestone --branch=main --commit-dirty=true
 ```
 
-涉及三处，改域名时必须一起改：
+- 项目是 **Direct Upload**（没接 Git），所以没有“推 main 自动上线”，要么本地跑上面的命令，要么在 CI 里配 `CLOUDFLARE_API_TOKEN` 后由 Actions 调 wrangler。
+- 改域名要三处同步，否则 sitemap/canonical 指向旧域名：
 
 | 位置 | 当前值 |
 | --- | --- |
 | `docusaurus.config.ts` 的 `url` | `https://nodestone.asxz.one`（`baseUrl` 保持 `/`） |
-| 仓库 Settings → Pages → Custom domain | `nodestone.asxz.one`（同时把 `static/CNAME` 提进仓库，构建产物里会自动带上） |
-| Cloudflare DNS（asxz.one 区） | `CNAME nodestone → nodestonedev.github.io`，**代理必须关闭（灰色云，仅 DNS）** |
+| Cloudflare DNS（asxz.one 区） | `CNAME nodestone → nodestone.pages.dev` |
+| Pages 项目 → 自定义域 | `nodestone.asxz.one` |
 
-代理一旦打开（橙色云），GitHub 的 Let's Encrypt 证书签发会失败；等 Pages 显示
-"Certificate issued" 后再回 Pages 勾上 **Enforce HTTPS**。
-
-注意：Cloudflare 上 `asxz.one` 的 API Token（wrangler 登录用的那个）只有 `zone:read`，
-**没有 DNS 写权限**，所以 DNS 记录只能在 Cloudflare 控制台手工加，或者另配一个带
-`Zone.DNS:Edit` 的 API Token。
+注意：wrangler 登录拿到的 OAuth 令牌只有 `pages:write` 和 `zone:read`，
+**没有 DNS 写权限**，DNS 记录只能在 Cloudflare 控制台改，或另配带 `Zone.DNS:Edit` 的
+API Token。
 
 ## 内容来源
 
