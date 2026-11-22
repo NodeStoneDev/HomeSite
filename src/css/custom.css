@@ -210,11 +210,7 @@ html.ns-intro-active.ns-intro-reveal .main-wrapper {
   transform: none;
 }
 
-.navbar__logo {
-  transition: opacity 0.18s ease;
-}
-
-/* 顶栏真正的 logo 先藏起来，等开场动画里的字标飞过来落位后再露出来 */
+/* 顶栏真正的 logo 先藏起来，等开场动画里的字标飞过来落位后再露出来（交接点像素对齐，故不加过渡） */
 html.ns-intro-active .navbar__logo {
   opacity: 0;
 }

@@ -33,9 +33,18 @@
     ),
     repeating-linear-gradient(-45deg, rgb(100 116 140 / 16%) 0 1px, transparent 1px 26px);
   mask-image: radial-gradient(circle at 50% 50%, #000 0%, rgb(0 0 0 / 55%) 45%, transparent 76%);
-  opacity: 0;
-  transition: opacity 0.65s ease;
+  opacity: 1;
+  animation: gridIn 0.95s ease both;
   pointer-events: none;
+}
+
+@keyframes gridIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 :global(html[data-theme='dark']) .grid {
@@ -47,15 +56,15 @@
     repeating-linear-gradient(-45deg, rgb(167 178 196 / 18%) 0 1px, transparent 1px 26px);
 }
 
-.splash[data-phase='typing'] .grid,
-.splash[data-phase='logo'] .grid,
-.splash[data-phase='fly'] .grid {
-  opacity: 1;
+/* 正文浮现时底纹退场（用动画覆盖入场动画） */
+:global(html.ns-intro-reveal) .grid {
+  animation: gridOut 0.55s ease forwards;
 }
 
-:global(html.ns-intro-reveal) .grid {
-  opacity: 0;
-  transition: opacity 0.55s ease;
+@keyframes gridOut {
+  to {
+    opacity: 0;
+  }
 }
 
 .stage {
