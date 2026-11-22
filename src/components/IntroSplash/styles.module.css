@@ -20,35 +20,23 @@
   background: transparent;
 }
 
-/* 磁感线底纹：45° 斜向网格线，中心浓、四周淡 */
+/* 磁感线底纹：45° 晶格（组件内用 <pattern> 平铺），中心浓、四周淡 */
 .grid {
   position: absolute;
-  inset: -25%;
-  background-image: repeating-linear-gradient(
-      45deg,
-      rgb(100 116 140 / 16%) 0 1px,
-      transparent 1px 26px
-    ),
-    repeating-linear-gradient(-45deg, rgb(100 116 140 / 16%) 0 1px, transparent 1px 26px);
+  inset: 0;
+  width: 100%;
+  height: 100%;
   mask-image: radial-gradient(circle at 50% 50%, #000 0%, rgb(0 0 0 / 55%) 45%, transparent 76%);
   opacity: 1;
   animation: gridIn 0.95s ease both;
   pointer-events: none;
 }
 
-:global([data-theme='dark']) .grid {
-  background-image: repeating-linear-gradient(
-      45deg,
-      rgb(167 178 196 / 18%) 0 1px,
-      transparent 1px 26px
-    ),
-    repeating-linear-gradient(-45deg, rgb(167 178 196 / 18%) 0 1px, transparent 1px 26px);
-}
-
 @keyframes gridIn {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -74,95 +62,22 @@
   height: 100%;
 }
 
+/* 打字机与最终 logo 是同一个 SVG：画幅比例固定，尺寸不可能跳变 */
 .lockup {
-  --lockup-h: clamp(46px, 8vw, 86px);
+  --art-h: clamp(84px, 18vw, 156px);
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: var(--lockup-h);
+  height: var(--art-h);
+  aspect-ratio: 2030 / 560;
   transform-origin: center center;
   transition: transform 0.9s cubic-bezier(0.62, 0.02, 0.24, 1);
   will-change: transform;
 }
 
-.artLight,
-.artDark {
+.art {
   display: block;
-  height: var(--lockup-h);
-  width: auto;
-  opacity: 0;
-  transition: opacity 0.38s ease;
-}
-
-:global([data-theme='dark']) .artLight {
-  display: none;
-}
-
-.artDark {
-  display: none;
-}
-
-:global([data-theme='dark']) .artDark {
-  display: block;
-}
-
-.splash[data-phase='logo'] .artLight,
-.splash[data-phase='fly'] .artLight,
-.splash[data-phase='logo'] .artDark,
-.splash[data-phase='fly'] .artDark {
-  opacity: 1;
-}
-
-/* 打字机文字叠在字标位置 */
-.typed {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: flex;
-  align-items: center;
-  transform: translate(-50%, -50%);
-  font-family: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, sans-serif;
-  font-weight: 800;
-  font-size: calc(var(--lockup-h) * 0.5);
-  line-height: 1;
-  letter-spacing: 0.01em;
-  white-space: nowrap;
-  color: #222a35;
-  transition: opacity 0.22s ease, transform 0.42s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-:global([data-theme='dark']) .typed {
-  color: #f2f5f9;
-}
-
-/* 字标出现时，文字右移让位给磁石方块并淡出 */
-.splash[data-phase='logo'] .typed,
-.splash[data-phase='fly'] .typed {
-  opacity: 0;
-  transform: translate(-50%, -50%) translateX(calc(var(--lockup-h) * 0.36));
-}
-
-.caret {
-  display: inline-block;
-  width: 0.055em;
-  height: 0.72em;
-  margin-left: 0.06em;
-  background: currentcolor;
-  animation: blink 0.95s step-end infinite;
-}
-
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
-
-.splash[data-phase='logo'] .caret,
-.splash[data-phase='fly'] .caret {
-  opacity: 0;
+  width: 100%;
+  height: 100%;
 }

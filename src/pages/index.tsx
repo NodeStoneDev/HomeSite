@@ -2,7 +2,7 @@ import type {ReactNode} from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
-import useBaseUrl from '@docusaurus/useBaseUrl';
+import NodestoneLogo from '@site/src/components/NodestoneLogo';
 import styles from './index.module.css';
 
 type Feature = {
@@ -119,9 +119,9 @@ export default function Home(): ReactNode {
             </dl>
           </div>
           <div className={styles.heroArt}>
-            <img
-              src={useBaseUrl('/brand/svg/nodestone-square-plain.svg')}
-              alt="NodeStone 徽标：磁石方块与八节点网络拓扑"
+            <NodestoneLogo
+              layout="mark"
+              title="NodeStone 徽标：磁石方块与 NodeStone 字标"
               className={styles.mark}
             />
           </div>

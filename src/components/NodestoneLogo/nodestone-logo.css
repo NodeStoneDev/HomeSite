@@ -1,0 +1,291 @@
+/* NodeStone 品牌图形（十角星 / 45° 晶格 / 磁石 / 字标）。
+   数据来自 nodestone-web-logo-kit，几何见 headerGeometry.ts / markGeometry.ts。
+   颜色一律走 CSS 变量：浅色为主题默认，[data-theme='dark'] 覆盖。
+   类名统一 ns- 前缀，属于全局样式，不要在 .module.css 里复用。 */
+
+.ns-root {
+  --ns-grid-1: rgba(128, 136, 148, 0.32);
+  --ns-grid-2: rgba(102, 114, 128, 0.46);
+  --ns-grid-3: rgba(128, 136, 148, 0.1);
+  --ns-perim: rgba(72, 92, 115, 0.65);
+  --ns-chord-2: rgba(58, 76, 96, 0.78);
+  --ns-chord-3: #1c2634;
+  --ns-int: #202c3c;
+  --ns-vertex: #161b24;
+  --ns-wordmark: #12151c;
+  --ns-mark-ink: #222a35;
+  --ns-mark-shade: #59636f;
+
+  display: block;
+  overflow: visible;
+  user-select: none;
+}
+
+[data-theme='dark'] .ns-root {
+  --ns-grid-1: rgba(132, 140, 154, 0.34);
+  --ns-grid-2: rgba(148, 160, 178, 0.46);
+  --ns-grid-3: rgba(132, 140, 154, 0.12);
+  --ns-perim: rgba(154, 186, 222, 0.6);
+  --ns-chord-2: rgba(162, 194, 228, 0.72);
+  --ns-chord-3: #c6e0fa;
+  --ns-int: #e4f1fe;
+  --ns-vertex: #f2f8ff;
+  --ns-wordmark: #f6f9ff;
+  --ns-mark-ink: #f2f5f9;
+  --ns-mark-shade: #0b1018;
+}
+
+/* 作为整屏底纹使用时不能溢出，否则会撑出横向滚动条 */
+.ns-root.ns-lattice-art {
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  /* 铺满整屏后点距远大于图形本身，要用更高的对比度才看得出纹理 */
+  --ns-grid-1: rgba(128, 136, 148, 0.5);
+}
+
+[data-theme='dark'] .ns-root.ns-lattice-art {
+  --ns-grid-1: rgba(140, 150, 168, 0.46);
+}
+
+/* ---------- 45° 晶格 ---------- */
+
+.ns-root .ns-bg-dot.ns-t1 {
+  fill: var(--ns-grid-1);
+}
+
+.ns-root .ns-bg-dot.ns-t2 {
+  fill: var(--ns-grid-2);
+}
+
+.ns-root .ns-bg-dot.ns-t3 {
+  fill: var(--ns-grid-3);
+}
+
+.ns-root .ns-bg-x.ns-t1 {
+  stroke: var(--ns-grid-1);
+}
+
+.ns-root .ns-bg-x.ns-t2 {
+  stroke: var(--ns-grid-2);
+}
+
+.ns-root .ns-bg-x.ns-t3 {
+  stroke: var(--ns-grid-3);
+}
+
+/* ---------- 十角星 ---------- */
+
+.ns-root .ns-star {
+  opacity: 1;
+  filter: drop-shadow(0 0 4.6px rgb(85 140 200 / 42%));
+  transition: opacity 0.45s ease, filter 0.35s ease;
+}
+
+/* 打字阶段星图与磁石还没登场 */
+.ns-root .ns-hidden {
+  opacity: 0;
+}
+
+/* 只有静态长时间显示（顶栏）时才响应鼠标，别让开场遮罩有反馈 */
+.ns-root.ns-mode-idle:hover .ns-star {
+  filter: drop-shadow(0 0 7.5px rgb(85 140 200 / 42%));
+}
+
+.ns-root .ns-perim-line {
+  stroke: var(--ns-perim);
+  stroke-dasharray: 0.9 7.2;
+  animation: ns-dash-flow 12s linear infinite;
+}
+
+.ns-root .ns-chord-2 {
+  stroke: var(--ns-chord-2);
+  stroke-dasharray: var(--ns-len, 500);
+  stroke-dashoffset: 0;
+}
+
+.ns-root .ns-chord-3 {
+  stroke: var(--ns-chord-3);
+  stroke-dasharray: var(--ns-len, 600);
+  stroke-dashoffset: 0;
+}
+
+.ns-root .ns-int-dot {
+  fill: var(--ns-int);
+}
+
+.ns-root .ns-vertex {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ns-vertex-pulse 3.6s ease-in-out infinite;
+}
+
+.ns-root .ns-vertex path {
+  stroke: var(--ns-vertex);
+}
+
+/* ---------- 磁石 ---------- */
+
+.ns-root .ns-lodestone {
+  transform-origin: 395px 360px;
+  animation: ns-core-float 5s ease-in-out infinite;
+  filter: drop-shadow(0 8.1px 9.3px rgb(5 8 14 / 32%));
+  transition: opacity 0.45s ease;
+}
+
+/* ---------- 字标 ---------- */
+
+.ns-root .ns-wordmark {
+  fill: var(--ns-wordmark);
+  font-family: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.ns-root .ns-wordmark-group {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 打字阶段每敲一个字都要重新居中，过快的大缓动会拖影 */
+.ns-root .ns-wordmark-group.ns-typing {
+  transition: transform 0.12s ease-out;
+}
+
+.ns-root .ns-caret {
+  fill: var(--ns-wordmark);
+  animation: ns-blink 0.95s step-end infinite;
+}
+
+/* ---------- 入场动画（mode="intro"） ---------- */
+
+.ns-root.ns-mode-intro .ns-chord-3 {
+  stroke-dashoffset: var(--ns-len, 600);
+  animation: ns-draw 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(0.06s + var(--ns-idx, 0) * 0.03s);
+}
+
+.ns-root.ns-mode-intro .ns-chord-2 {
+  stroke-dashoffset: var(--ns-len, 500);
+  animation: ns-draw 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(0.3s + var(--ns-idx, 0) * 0.025s);
+}
+
+.ns-root.ns-mode-intro .ns-perim-line {
+  opacity: 0;
+  animation: ns-fade-in 0.6s ease 0.35s forwards, ns-dash-flow 12s linear 0.95s infinite;
+}
+
+.ns-root.ns-mode-intro .ns-int-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: ns-dot-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: calc(0.42s + var(--ns-idx, 0) * 0.025s);
+}
+
+.ns-root.ns-mode-intro .ns-vertex {
+  animation: ns-vertex-deflect 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+    ns-vertex-pulse 3.6s ease-in-out infinite;
+  animation-delay: calc(var(--ns-idx, 0) * 0.045s), calc(0.9s + var(--ns-idx, 0) * 0.045s);
+}
+
+@keyframes ns-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes ns-fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ns-dash-flow {
+  to {
+    stroke-dashoffset: -160;
+  }
+}
+
+@keyframes ns-dot-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes ns-vertex-deflect {
+  0% {
+    transform: translate(var(--ns-dx, 0px), var(--ns-dy, 0px)) scale(0.68);
+    opacity: 0.3;
+  }
+
+  65% {
+    transform: translate(calc(var(--ns-dx, 0px) * -0.08), calc(var(--ns-dy, 0px) * -0.08)) scale(1.12);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes ns-vertex-pulse {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(0, 0) scale(1.1);
+  }
+}
+
+@keyframes ns-core-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4.6px);
+  }
+}
+
+@keyframes ns-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---------- 方形构图（layout="mark"，首页大图标） ---------- */
+
+.ns-root .ns-mark-word {
+  fill: var(--ns-mark-ink);
+}
+
+.ns-root .ns-shade-a {
+  stop-color: var(--ns-mark-shade);
+  stop-opacity: 0.26;
+}
+
+.ns-root .ns-shade-b {
+  stop-color: var(--ns-mark-shade);
+  stop-opacity: 0.09;
+}
+
+.ns-root .ns-shade-c {
+  stop-color: var(--ns-mark-shade);
+  stop-opacity: 0;
+}

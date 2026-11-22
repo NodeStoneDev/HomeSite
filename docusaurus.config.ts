@@ -108,11 +108,8 @@ const config: Config = {
     },
     navbar: {
       hideOnScroll: false,
-      logo: {
-        alt: 'NodeStone',
-        src: 'brand/svg/nodestone-horizontal-plain-upper.svg',
-        srcDark: 'brand/svg/nodestone-horizontal-plain-on-dark-upper.svg',
-      },
+      // logo 由 src/theme/Logo 用 NodestoneLogo 组件渲染（矢量），
+      // 这里不再配置 logo.src/srcDark 位图。
       items: [
         {
           type: 'docSidebar',

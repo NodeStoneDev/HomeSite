@@ -90,14 +90,25 @@ h4 {
   backdrop-filter: saturate(180%) blur(8px);
 }
 
+/* 顶栏 logo 由 NodestoneLogo 组件渲染（矢量十角星 + 字标），不再加载位图。
+   组件内部画幅固定（2030×560），宽度随高度走，不会把字标压扁。 */
 .navbar__logo {
-  height: 28px;
+  display: flex;
+  align-items: center;
+  height: 40px;
   margin-right: 0;
 }
 
-.navbar__logo img {
+.navbar__logo > svg {
   height: 100%;
   width: auto;
+  overflow: visible;
+}
+
+@media (max-width: 996px) {
+  .navbar__logo {
+    height: 32px;
+  }
 }
 
 .navbar__items {

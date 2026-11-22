@@ -158,9 +158,11 @@
 }
 
 .mark {
+  display: block;
   width: 100%;
   max-width: 340px;
   height: auto;
+  overflow: visible;
   filter: drop-shadow(0 22px 48px rgb(34 42 53 / 16%));
 }
 

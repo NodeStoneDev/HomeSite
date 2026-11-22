@@ -1,22 +1,22 @@
 import {useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
-import useBaseUrl from '@docusaurus/useBaseUrl';
+import NodestoneLogo from '@site/src/components/NodestoneLogo';
 import styles from './styles.module.css';
 
-/** 开场动画阶段：空白 → 打字机 → 完整字标 → 飞到顶栏左上角 → 卸载 */
+/** 开场动画阶段：底纹 → 打字机 → 星图入场 → 飞到顶栏左上角 → 卸载 */
 type Phase = 'boot' | 'typing' | 'logo' | 'fly' | 'done';
 
-const WORD = 'NODESTONE';
+const WORD_LENGTH = 9; // NODESTONE
 const CHAR_MS = 90;
 const BOOT_MS = 480;
-const HOLD_MS = 400;
-const LOGO_MS = 620;
+const HOLD_MS = 300;
+const LOGO_MS = 1350;
 const FLY_MS = 900;
 
 type SavedStyle = {el: HTMLElement; css: string};
 
 export default function IntroSplash(): React.ReactNode {
   const [phase, setPhase] = useState<Phase>('boot');
-  const [typed, setTyped] = useState('');
+  const [typed, setTyped] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [flyTransform, setFlyTransform] = useState('');
 
@@ -24,9 +24,6 @@ export default function IntroSplash(): React.ReactNode {
   const timers = useRef<number[]>([]);
   const saved = useRef<SavedStyle[]>([]);
   const mainRef = useRef<HTMLElement | null>(null);
-
-  const lightLockup = useBaseUrl('/brand/svg/nodestone-horizontal-plain-upper.svg');
-  const darkLockup = useBaseUrl('/brand/svg/nodestone-horizontal-plain-on-dark-upper.svg');
 
   /** 把某个元素的 style 属性原样存下来，收尾时恢复 */
   const stash = (el: HTMLElement | null) => {
@@ -120,7 +117,7 @@ export default function IntroSplash(): React.ReactNode {
     const at = (ms: number, fn: () => void) => {
       timers.current.push(window.setTimeout(fn, ms));
     };
-    const typingEnd = BOOT_MS + WORD.length * CHAR_MS + HOLD_MS;
+    const typingEnd = BOOT_MS + WORD_LENGTH * CHAR_MS + HOLD_MS;
     at(BOOT_MS, () => setPhase('typing'));
     at(typingEnd, () => setPhase('logo'));
     at(typingEnd + LOGO_MS, startFly);
@@ -134,8 +131,8 @@ export default function IntroSplash(): React.ReactNode {
     let i = 0;
     const id = window.setInterval(() => {
       i += 1;
-      setTyped(WORD.slice(0, i));
-      if (i >= WORD.length) {
+      setTyped(i);
+      if (i >= WORD_LENGTH) {
         window.clearInterval(id);
       }
     }, CHAR_MS);
@@ -146,6 +143,8 @@ export default function IntroSplash(): React.ReactNode {
     return null;
   }
 
+  const starShown = phase === 'logo' || phase === 'fly';
+
   return (
     <div
       className={styles.splash}
@@ -153,7 +152,7 @@ export default function IntroSplash(): React.ReactNode {
       data-phase={phase}
       data-reveal={revealed ? 'true' : 'false'}
       aria-hidden="true">
-      <div className={styles.grid} />
+      <NodestoneLogo layout="lattice" className={styles.grid} />
       <div className={styles.stage}>
         <div
           ref={boxRef}
@@ -164,12 +163,13 @@ export default function IntroSplash(): React.ReactNode {
               finish();
             }
           }}>
-          <img className={styles.artLight} src={lightLockup} alt="" />
-          <img className={styles.artDark} src={darkLockup} alt="" />
-          <span className={styles.typed}>
-            {typed}
-            <i className={styles.caret} />
-          </span>
+          <NodestoneLogo
+            layout="header"
+            mode={starShown ? 'intro' : 'static'}
+            typed={typed}
+            art={starShown}
+            className={styles.art}
+          />
         </div>
       </div>
     </div>
