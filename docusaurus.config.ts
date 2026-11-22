@@ -30,12 +30,20 @@ const config: Config = {
       tagName: 'script',
       attributes: {},
       innerHTML: `(function(){try{
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduce) return;
-  var h = document.documentElement;
-  h.classList.add('ns-intro-active');
-  // 兜底：若脚本异常导致动画未结束，6 秒后强制恢复
-  setTimeout(function(){ h.classList.remove('ns-intro-active'); h.classList.remove('ns-intro-reveal'); }, 6000);
+  if(document.getElementById('ns-intro-boot')) return;
+  var s = document.createElement('style');
+  s.id = 'ns-intro-boot';
+  s.textContent = '[data-ns-splash]{display:flex!important}';
+  document.head.appendChild(s);
+  // 兜底：万一动画因异常没走完，9 秒后无条件放开页面
+  setTimeout(function(){
+    var b = document.getElementById('ns-intro-boot'); if(b && b.parentNode) b.parentNode.removeChild(b);
+    var el = document.querySelector('[data-ns-splash]'); if(el) el.style.display = 'none';
+    var mw = document.querySelector('.main-wrapper');
+    if(mw){ mw.style.removeProperty('opacity'); mw.style.removeProperty('transform'); }
+    var lg = document.querySelector('.navbar__logo'); if(lg) lg.style.removeProperty('opacity');
+    if(document.body) document.body.style.removeProperty('overflow');
+  }, 9000);
 }catch(e){}})();`,
     },
   ],
@@ -106,13 +114,8 @@ const config: Config = {
           position: 'left',
           label: '文档',
         },
-        {
-          type: 'docSidebar',
-          sidebarId: 'protocolSidebar',
-          position: 'left',
-          label: '协议',
-        },
         {to: '/news', label: '新闻', position: 'left'},
+        {to: '/about', label: '关于', position: 'left'},
         {
           type: 'html',
           position: 'right',
@@ -134,12 +137,19 @@ const config: Config = {
           items: [
             {label: '什么是 NodeStone', to: '/docs/intro'},
             {label: '总体架构', to: '/docs/architecture'},
-            {label: '启动器接入', to: '/docs/guides/launcher-integration'},
             {label: '常见问题', to: '/docs/faq'},
           ],
         },
         {
-          title: '协议',
+          title: '指南',
+          items: [
+            {label: '启动器接入', to: '/docs/guides/launcher-integration'},
+            {label: '自建镜像源', to: '/docs/guides/self-hosted-mirror'},
+            {label: '版本历史', to: '/docs/compass/changelog'},
+          ],
+        },
+        {
+          title: 'Compass 协议',
           items: [
             {label: '协议总览', to: '/docs/compass/overview'},
             {label: '协议规范', to: '/docs/compass/protocol'},
@@ -151,8 +161,7 @@ const config: Config = {
           title: '更多',
           items: [
             {label: '新闻', to: '/news'},
-            {label: '版本历史', to: '/docs/compass/changelog'},
-            {label: '自建镜像源', to: '/docs/guides/self-hosted-mirror'},
+            {label: '关于我们', to: '/about'},
           ],
         },
       ],

@@ -9,6 +9,7 @@ NodeStone 官方网站的源码，基于 [Docusaurus 3](https://docusaurus.io/) 
 | 介绍 | `/` | `src/pages/index.tsx` |
 | 文档 | `/docs` | `docs/` |
 | 新闻 | `/news` | `blog/` |
+| 关于 | `/about` | `src/pages/about.tsx` |
 
 ## 本地开发
 

@@ -16,12 +16,10 @@ const sidebars: SidebarsConfig = {
       collapsible: false,
       items: ['guides/launcher-integration', 'guides/self-hosted-mirror'],
     },
-  ],
-  protocolSidebar: [
     {
       type: 'category',
       label: 'Compass Protocol (NCP)',
-      collapsible: false,
+      collapsible: true,
       items: [
         'compass/overview',
         'compass/protocol',

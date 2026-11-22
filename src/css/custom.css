@@ -189,30 +189,11 @@ blockquote {
   border-radius: 0 8px 8px 0;
 }
 
-/* ---------- 开场动画（IntroSplash）状态 ---------- */
+/* ---------- 开场动画（IntroSplash） ---------- */
 
+/* 正文的淡入由组件在浮现时刻内联切换 opacity / transform；这里只给过渡曲线 */
 .main-wrapper {
   transition: opacity 0.72s ease, transform 0.72s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-html.ns-intro-active,
-html.ns-intro-active body {
-  overflow: hidden;
-}
-
-html.ns-intro-active .main-wrapper {
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-html.ns-intro-active.ns-intro-reveal .main-wrapper {
-  opacity: 1;
-  transform: none;
-}
-
-/* 顶栏真正的 logo 先藏起来，等开场动画里的字标飞过来落位后再露出来（交接点像素对齐，故不加过渡） */
-html.ns-intro-active .navbar__logo {
-  opacity: 0;
 }
 
 /* ---------- 页脚 ---------- */

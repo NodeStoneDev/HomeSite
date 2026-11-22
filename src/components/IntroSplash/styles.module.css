@@ -6,19 +6,17 @@
   align-items: center;
   justify-content: center;
   background: #f7f9fb;
-  transition: background 0.7s ease;
+  transition: background 0.62s ease;
   contain: paint;
 }
 
-:global(html.ns-intro-active) .splash {
-  display: flex;
-}
-
-:global(html[data-theme='dark']) .splash {
+/* 默认隐藏：只有 <head> 内联脚本（或组件自身）注入的 #ns-intro-boot 样式
+   才会把它打开。两者都没跑起来时，遮罩不挡页面。 */
+:global([data-theme='dark']) .splash {
   background: #141a26;
 }
 
-:global(html.ns-intro-reveal) .splash {
+.splash[data-reveal='true'] {
   background: transparent;
 }
 
@@ -38,6 +36,15 @@
   pointer-events: none;
 }
 
+:global([data-theme='dark']) .grid {
+  background-image: repeating-linear-gradient(
+      45deg,
+      rgb(167 178 196 / 18%) 0 1px,
+      transparent 1px 26px
+    ),
+    repeating-linear-gradient(-45deg, rgb(167 178 196 / 18%) 0 1px, transparent 1px 26px);
+}
+
 @keyframes gridIn {
   from {
     opacity: 0;
@@ -47,18 +54,9 @@
   }
 }
 
-:global(html[data-theme='dark']) .grid {
-  background-image: repeating-linear-gradient(
-      45deg,
-      rgb(167 178 196 / 18%) 0 1px,
-      transparent 1px 26px
-    ),
-    repeating-linear-gradient(-45deg, rgb(167 178 196 / 18%) 0 1px, transparent 1px 26px);
-}
-
 /* 正文浮现时底纹退场（用动画覆盖入场动画） */
-:global(html.ns-intro-reveal) .grid {
-  animation: gridOut 0.55s ease forwards;
+.splash[data-reveal='true'] .grid {
+  animation: gridOut 0.6s ease forwards;
 }
 
 @keyframes gridOut {
@@ -84,7 +82,7 @@
   justify-content: center;
   height: var(--lockup-h);
   transform-origin: center center;
-  transition: transform 0.94s cubic-bezier(0.62, 0.02, 0.24, 1);
+  transition: transform 0.9s cubic-bezier(0.62, 0.02, 0.24, 1);
   will-change: transform;
 }
 
@@ -94,10 +92,10 @@
   height: var(--lockup-h);
   width: auto;
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.38s ease;
 }
 
-:global(html[data-theme='dark']) .artLight {
+:global([data-theme='dark']) .artLight {
   display: none;
 }
 
@@ -105,7 +103,7 @@
   display: none;
 }
 
-:global(html[data-theme='dark']) .artDark {
+:global([data-theme='dark']) .artDark {
   display: block;
 }
 
@@ -116,7 +114,7 @@
   opacity: 1;
 }
 
-/* 打字机文字叠在字标位置（字标左侧会随后长出磁石方块） */
+/* 打字机文字叠在字标位置 */
 .typed {
   position: absolute;
   top: 50%;
@@ -134,7 +132,7 @@
   transition: opacity 0.22s ease, transform 0.42s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-:global(html[data-theme='dark']) .typed {
+:global([data-theme='dark']) .typed {
   color: #f2f5f9;
 }
 
