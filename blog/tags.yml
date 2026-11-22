@@ -1,0 +1,14 @@
+协议:
+  label: 协议
+  permalink: /tags/protocol
+  description: NodeStone Compass Protocol 的版本与规范变更。
+
+发布:
+  label: 发布
+  permalink: /tags/release
+  description: 站点、文档与产品层面的发布公告。
+
+设计:
+  label: 设计
+  permalink: /tags/design
+  description: 品牌与视觉识别相关。

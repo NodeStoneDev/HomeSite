@@ -1,0 +1,269 @@
+/* NodeStone 站点主题 —— 取自 Brand 视觉识别（ink / grid / accent） */
+
+@import '@fontsource-variable/plus-jakarta-sans';
+
+:root {
+  /* 品牌 token（Brand/README.md §2） */
+  --ns-ink: #222a35;
+  --ns-ink-soft: #333d4c;
+  --ns-line: #64748c;
+  --ns-grid: #a7b2c4;
+  --ns-accent: #5b6ba8;
+  --ns-paper: #f7f9fb;
+  --ns-paper-deep: #e6e9ee;
+  --ns-on-dark: #f2f5f9;
+  --ns-dark: #1a2130;
+  --ns-dark-deep: #141a26;
+
+  /* Infima 主色 */
+  --ifm-color-primary: #5b6ba8;
+  --ifm-color-primary-dark: #4e5c91;
+  --ifm-color-primary-darker: #414c79;
+  --ifm-color-primary-darkest: #343d61;
+  --ifm-color-primary-light: #6e7db3;
+  --ifm-color-primary-lighter: #818ebe;
+  --ifm-color-primary-lightest: #94a0c9;
+
+  --ifm-font-family-base: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', 'Segoe UI',
+    system-ui, -apple-system, 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  --ifm-heading-font-family: var(--ifm-font-family-base);
+  --ifm-heading-font-weight: 800;
+  --ifm-font-weight-semibold: 600;
+  --ifm-line-height-base: 1.75;
+
+  --ifm-code-font-size: 90%;
+  --ifm-code-border-radius: 6px;
+  --ifm-global-radius: 10px;
+  --ifm-background-color: #ffffff;
+  --ifm-background-surface-color: var(--ns-paper);
+  --ifm-navbar-shadow: 0 1px 0 rgb(34 42 53 / 8%);
+  --ifm-toc-border-color: var(--ns-paper-deep);
+  --ifm-footer-background-color: var(--ns-dark);
+  --docusaurus-highlighted-code-line-bg: rgb(91 107 168 / 12%);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #94a0c9;
+  --ifm-color-primary-dark: #818ebe;
+  --ifm-color-primary-darker: #6e7db3;
+  --ifm-color-primary-darkest: #5b6ba8;
+  --ifm-color-primary-light: #a7b1d3;
+  --ifm-color-primary-lighter: #b9c1dd;
+  --ifm-color-primary-lightest: #cbd1e7;
+
+  --ifm-background-color: var(--ns-dark-deep);
+  --ifm-background-surface-color: var(--ns-dark);
+  --ifm-navbar-background-color: var(--ns-dark);
+  --ifm-footer-background-color: #0f141d;
+  --ifm-toc-border-color: #26303f;
+  --docusaurus-highlighted-code-line-bg: rgb(148 160 201 / 18%);
+}
+
+/* ---------- 基础排版 ---------- */
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  letter-spacing: -0.015em;
+}
+
+.markdown h1:first-child {
+  --ifm-h1-font-size: 2.1rem;
+}
+
+.markdown > h2 {
+  margin-top: 2.6rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--ifm-toc-border-color);
+}
+
+/* ---------- 顶栏 ---------- */
+
+.navbar {
+  padding: 0.55rem 1rem;
+  backdrop-filter: saturate(180%) blur(8px);
+}
+
+.navbar__logo {
+  height: 28px;
+  margin-right: 0;
+}
+
+.navbar__logo img {
+  height: 100%;
+  width: auto;
+}
+
+.navbar__items {
+  gap: 2px;
+}
+
+.navbar__link {
+  font-weight: 600;
+  font-size: 0.94rem;
+}
+
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.42rem 0.95rem;
+  border-radius: 999px;
+  background: var(--ns-ink);
+  color: var(--ns-on-dark) !important;
+  font-weight: 700;
+  font-size: 0.86rem;
+  white-space: nowrap;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.nav-cta:hover {
+  background: var(--ns-accent);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+[data-theme='dark'] .nav-cta {
+  background: var(--ns-on-dark);
+  color: var(--ns-dark) !important;
+}
+
+[data-theme='dark'] .nav-cta:hover {
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ns-dark) !important;
+}
+
+/* ---------- 侧栏 / 目录 ---------- */
+
+.menu__link {
+  font-size: 0.92rem;
+  border-radius: 6px;
+}
+
+.menu__link--active:not(.menu__link--sublist) {
+  background: rgb(91 107 168 / 10%);
+}
+
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--ifm-toc-border-color);
+}
+
+/* ---------- 代码 ---------- */
+
+.theme-code-block,
+pre[class*='language-'] {
+  border-radius: 10px;
+}
+
+code {
+  border: 1px solid var(--ifm-toc-border-color);
+  padding: 0.1em 0.34em;
+}
+
+.theme-code-block code {
+  border: none;
+}
+
+/* ---------- 表格 ---------- */
+
+.markdown table {
+  display: table;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.markdown table thead tr {
+  background: var(--ifm-background-surface-color);
+}
+
+/* ---------- 引用 ---------- */
+
+blockquote {
+  border-left: 3px solid var(--ifm-color-primary);
+  background: rgb(91 107 168 / 6%);
+  border-radius: 0 8px 8px 0;
+}
+
+/* ---------- 开场动画（IntroSplash）状态 ---------- */
+
+.main-wrapper {
+  transition: opacity 0.72s ease, transform 0.72s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html.ns-intro-active,
+html.ns-intro-active body {
+  overflow: hidden;
+}
+
+html.ns-intro-active .main-wrapper {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+html.ns-intro-active.ns-intro-reveal .main-wrapper {
+  opacity: 1;
+  transform: none;
+}
+
+.navbar__logo {
+  transition: opacity 0.18s ease;
+}
+
+/* 顶栏真正的 logo 先藏起来，等开场动画里的字标飞过来落位后再露出来 */
+html.ns-intro-active .navbar__logo {
+  opacity: 0;
+}
+
+/* ---------- 页脚 ---------- */
+
+.footer {
+  padding: 3rem 1rem 2rem;
+}
+
+.footer__logo {
+  margin-bottom: 1.25rem;
+  max-width: 210px;
+}
+
+.footer__title {
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ns-grid);
+}
+
+.footer__link-item {
+  font-size: 0.92rem;
+}
+
+.footer__copyright {
+  font-size: 0.82rem;
+  color: #7c8798;
+  margin-top: 1.5rem;
+}
+
+/* ---------- 新闻（博客） ---------- */
+
+.blog-list-page article header h2,
+.blog-post-page article header h1 {
+  letter-spacing: -0.02em;
+}
+
+article .avatar__name {
+  font-weight: 700;
+}
+
+/* ---------- 杂项 ---------- */
+
+.pagination-nav__link {
+  border-radius: 10px;
+}
+
+.pagination-nav__sublabel {
+  color: var(--ns-line);
+}
