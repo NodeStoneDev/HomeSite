@@ -15,7 +15,7 @@ type Feature = {
 const features: Feature[] = [
   {
     title: '索引轻量',
-    body: '一份约 20 KB 的签名清单就是全部入口。只记录 version_manifest、各版本 JSON 与 asset index 的映射，其余交给种子展开。',
+    body: '一份约 20 KB 的签名清单就是全部入口。只记录 version_manifest 与各版本 JSON 的映射，client.jar、libraries、assets 交给版本种子一次性展开。',
     to: '/docs/architecture',
     cta: '看架构',
   },
@@ -55,7 +55,7 @@ const layers = [
   {
     tag: 'Nodes',
     title: '传输层',
-    body: 'BT v2 节点网络承担流量，WebSeed 302 路由在无 Peer 时用官方源兜底。',
+    body: 'BT v2 节点网络承担流量，本地 307 WebSeed 路由在无 Peer 时用官方源兜底。',
     to: '/docs/compass/client',
   },
 ];
@@ -63,7 +63,7 @@ const layers = [
 const stats = [
   {value: '20 KB', label: '清单体积'},
   {value: '64 hex', label: '内容寻址哈希'},
-  {value: 'v0.8.0', label: '当前协议版本'},
+  {value: 'v0.9.0', label: '当前协议版本'},
   {value: 'Apache-2.0', label: '开放许可'},
 ];
 
@@ -90,7 +90,7 @@ export default function Home(): ReactNode {
           <div className={styles.heroText}>
             <p className={styles.eyebrow}>
               <span className={styles.dot} />
-              Compass Protocol v0.8.0 已发布
+              Compass Protocol v0.9.0 已发布
             </p>
             <h1 className={styles.title}>
               把 Minecraft 资源

@@ -100,8 +100,8 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     announcementBar: {
-      id: 'ncp-v08',
-      content: 'NodeStone Compass Protocol <b>v0.8.0</b> 已发布，<a href="/docs/compass/changelog">查看变更</a>',
+      id: 'ncp-v09',
+      content: 'NodeStone Compass Protocol <b>v0.9.0</b> 已发布，<a href="/docs/compass/changelog">查看变更</a>',
       backgroundColor: '#EEF0F6',
       textColor: '#222A35',
       isCloseable: true,

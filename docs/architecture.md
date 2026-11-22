@@ -16,7 +16,7 @@ NodeStone 从下往上分成四层。每一层只依赖下一层的契约，可�
                             │  nsGetFile / nsGetFilesBatch
 ┌───────────────────────────▼──────────────────────────────────┐
 │  NodeStone SDK                                               │
-│  本地 NSCI 缓存 · 批量调度 · 缓存未命中自愈 · WebSeed 302 路由  │
+│  本地 NSCI 缓存 · 批量调度 · 缓存未命中自愈 · WebSeed 307 路由  │
 └───────────────────────────┬──────────────────────────────────┘
                             │  Torrent / DirectFile
 ┌───────────────────────────▼──────────────────────────────────┐
@@ -32,29 +32,28 @@ NodeStone 从下往上分成四层。每一层只依赖下一层的契约，可�
 
 ## 发布层：一份签名清单
 
-清单文件（NSCL）固定在 `<源>/v08/<namespace>/latest.json`，旁边是同路径的 `latest.json.minisig`。
+清单文件（NSCL）固定在 `<源>/v09/<namespace>/latest.json`，旁边是同路径的 `latest.json.minisig`。
 
 它只包含两类信息，彼此分开存放：
 
-- `nsci.raw_kv`：`NSFID → Hash`。只收录**入口文件**——`version_manifest_v2.json`、各版本 `<version>.json`、各 `<asset_index>.json`。
+- `nsci.raw_kv`：`NSFID → Hash`。只收录**入口文件**——`version_manifest_v2.json` 与各版本 `<version>.json`。`<asset_index>.json`、`client.jar`、`libraries`、`assets` 都由版本种子展开时自动写入本地缓存，不需要在清单里重复收录。
 - `assets.torrents`：`Hash → delivery`。描述每个哈希怎么拿到：内嵌载荷（`integrated`）、种子直链（`url`）或磁力链接（`magnetic`）。
 
-> 为什么不合并成一张表？因为同一份 `delivery` 常被多个 `NSFID` 共享（例如同一大版本下多个小版本共用同一个 assets 种子），分开存能让清单体积小一个数量级。详见[协议规范 §1](/docs/compass/protocol#1-为什么把-nsci-和-torrents-分开)。
+> 为什么不合并成一张表？因为同一份 `delivery` 常被多个 `NSFID` 共享（例如多个版本种子包含同一批公共 `libraries` 与 `assets` 文件），分开存能让清单体积小一个数量级。详见[协议规范 §1](/docs/compass/protocol#1-为什么把-nsci-和-torrents-分开)。
 
 ## 内容层：内容寻址 + 种子
 
 | 资源类型 | 变化特征 | 投递方式 |
 | --- | --- | --- |
-| `version_manifest_v2.json` | 每次发版都变，且不展开子文件 | `raw_file` 内嵌直出，不打种子 |
-| `<version>.json` + `client.jar` + `libraries` | 发布后不可变 | 版本核心种子 `minecraft-core-<ver>` |
-| `<asset_index>.json` + 全部 `objects` | 按大版本聚合 | 大版本 Assets 种子 `minecraft-assets-<major>` |
+| `version_manifest_v2.json` | 每次发版都变，且不展开子文件 | `raw_file` 内嵌直出，不打种子，也不在本地留存历史副本 |
+| `<version>.json` + `client.jar` + `libraries` + `<asset_index>.json` + 全部 `assets/objects` | 发布后不可变 | 版本全量种子 `minecraft-version-<ver>`（每个游戏版本一个，约 300 KB） |
 
 两条硬约束保证 URL 能被无损还原：
 
-1. 种子 `info["file tree"]` 的**第一级目录固定为官方源主机名**（如 `piston-meta.mojang.com`、`libraries.minecraft.net`），后续层级对应 URL 路径。
-2. 协议头放在种子顶层 `ns-schemes` 字段，**不使用**标准 BEP-19 `url-list`（否则普通 BT 引擎会把 `info["name"]` 拼进域名，直接 DNS 失败）。
+1. 种子 `info["file tree"]` 的**第一级目录固定为官方源主机名**（如 `piston-meta.mojang.com`、`libraries.minecraft.net`），后续层级是**百分号解码后的原始 UTF-8 路径段**（落盘文件名与真实文件名一致，也避免 WebSeed 请求二次转义）。
+2. 协议头放在 `info["ns-schemes"]`（顶层 `ns-schemes` 为兼容副本），**不使用**标准 BEP-19 `url-list`（否则普通 BT 引擎会把 `info["name"]` 拼进域名，直接 DNS 失败）。
 
-这样「主机名 + 路径」拼回去就是原始官方 URL，再做 RFC 3986 规范化与 Base64 编码，就得到 `url:<Base64>` 形式的 **NSFID**。
+这样「主机名 + 逐段百分号编码的路径」拼回去就是原始官方 URL，再做 RFC 3986 规范化与 Base64 编码，就得到 `url:<Base64>` 形式的 **NSFID**。
 
 ## 传输层：节点网络
 
@@ -62,16 +61,16 @@ NodeStone 从下往上分成四层。每一层只依赖下一层的契约，可�
 
 - **BEP-5 DHT / BEP-11 PEX / BEP-14 LSD**：公网与局域网内快速寻址。
 - **Tracker**：磁力链接冷启动时的初始 Peer 通道，`delivery.magnetic` 强制携带 `&tr=`。
-- **WebSeed 兜底**：完全没有 Peer 时，SDK 通过本地 302 路由把分块请求重定向到官方源，复用 BT 引擎原生的 Range 与 Merkle 校验调度。
+- **WebSeed 兜底**：完全没有 Peer 时，SDK 通过本地 307 重定向路由把 WebSeed 分块请求转给官方源，复用 BT 引擎原生的 Range 与 Merkle 校验调度。
 
 ## 客户端层：SDK
 
 SDK 对启动器暴露的语义只有一条：**官方 URL 进，本地文件路径出**。它负责：
 
-- 维护本地 `NSFID → Hash` 缓存（`.nodestone/` 目录）；
+- 维护本地 `NSFID → Hash` 缓存（`.nodestone/cache/nsci.db`，SQLite + WAL）；
 - 把上百个小文件的下载请求按种子聚合、批量提交；
 - 在缓存未命中时按四步自愈流程补齐（规范化重算 → 入口种子补拉 → 扫描未展开种子 → 明确报错）；
-- 用本地 HTTP 302 路由桥接 WebSeed，避免手写分块与 Merkle 校验。
+- 用本地 HTTP 307 路由桥接 WebSeed（`/webseed/<torrenthash>/<info.name>/…`），避免手写分块与 Merkle 校验。
 
 ## 部署拓扑
 

@@ -20,7 +20,7 @@ description: NodeStone 是一套面向 Minecraft 生态的开源资源分发网�
 | 组成 | 说明 | 对应文档 |
 | --- | --- | --- |
 | **Compass 服务** | NodeStone 官方基于协议维护的元数据源，提供 Minecraft 本体、ModLoader 及 Mod 的下载索引（`latest.json`，约 20 KB） | [协议总览](/docs/compass/overview) |
-| **NCP 协议** | NodeStone Compass Protocol —— 描述清单格式、文件标识（NSFID）、种子打包规范与校验规则的开放协议，当前版本 **v0.8.0**，Apache-2.0 | [协议规范](/docs/compass/protocol) |
+| **NCP 协议** | NodeStone Compass Protocol —— 描述清单格式、文件标识（NSFID）、种子打包规范与校验规则的开放协议，当前版本 **v0.9.0**，Apache-2.0 | [协议规范](/docs/compass/protocol) |
 | **SDK 与节点** | 官方开发包，把「传一个官方 URL、拿回一个本地文件」封装成 `nsGetFile` / `nsGetFilesBatch` 两个调用；底层由 BitTorrent v2 节点（DHT / PEX / LSD）与 WebSeed 兜底完成搬运 | [启动器接入](/docs/guides/launcher-integration) |
 
 ## 一次下载发生了什么

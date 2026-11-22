@@ -25,14 +25,14 @@ NodeStone 首先是**分发网络与协议**：一套签名的元数据源（Com
 
 不。协议在传输上只要求「能按 BEP-52 校验分块」。
 
-- 有现成 BT 引擎（`libtorrent-rasterbar`、`rqbit`、`anacrolix/torrent` 等）：按[客户端推荐实现](/docs/compass/client)里的 C-1 方案，用本地 302 路由桥接 WebSeed，零引擎改动。
+- 有现成 BT 引擎（`libtorrent-rasterbar`、`rqbit`、`anacrolix/torrent` 等）：按[客户端推荐实现](/docs/compass/client)里的 C-1 方案，用本地 307 路由桥接 WebSeed，零引擎改动。
 - 不想引入 BT 引擎：按 C-2 方案自己实现 Range 请求与 Merkle 校验，SDK 里已经定义了分块对齐规则。
 
 ## 为什么有的文件没有种子？
 
 `version_manifest_v2.json` 这类**高频变化的顶层入口文件**故意不打种子。每次发版都生成新种子会产生大量废弃做种任务，也会逼客户端做引用计数清理。协议因此强制这类文件走 `raw_file` 直出，把载荷内嵌进 `latest.json`。
 
-反过来说，`raw_file` **不能**用于需要展开子文件索引的入口（`<version>.json`、`<asset_index>.json`），那是协议红线。
+反过来说，`raw_file` **不能**用于需要展开子文件索引的入口（`<version>.json`），那是协议红线；它也不在客户端的 `.nodestone/` 下留存历史缓存副本，每次请求现场解码校验并直接交付。
 
 ## `latest.json` 才 20 KB，够用吗？
 
@@ -44,7 +44,7 @@ NodeStone 首先是**分发网络与协议**：一套签名的元数据源（Com
 
 ## 协议现在稳定吗？
 
-当前是 **v0.8.0**。已经在用的部分（`url:<Base64>` 形式的 NSFID、BT v2 打包、minisign 发布）按稳定接口对待；明确标注「未来预留」的部分（`sha256:<Hex>` 形式的 NSFID、正则路由表）不保证兼容。变更记录见[版本历史](/docs/compass/changelog)。
+当前是 **v0.9.0**。已经在用的部分（`url:<Base64>` 形式的 NSFID、BT v2 打包、minisign 发布）按稳定接口对待；明确标注「未来预留」的部分（`sha256:<Hex>` 形式的 NSFID、正则路由表）不保证兼容。变更记录见[版本历史](/docs/compass/changelog)。
 
 ## 我可以自己架镜像源吗？
 

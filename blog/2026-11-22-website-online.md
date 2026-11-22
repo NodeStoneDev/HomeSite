@@ -14,7 +14,7 @@ NodeStone 的官网今天上线了。它同时承担三件事：讲清楚 NodeSt
 ## 站点结构
 
 - **[介绍](/docs/intro)**：从「一次下载发生了什么」开始，讲清索引、内容、节点三者的分工，以及[总体架构](/docs/architecture)。
-- **[文档](/docs/compass/overview)**：Compass Protocol（NCP）v0.8.0 的完整规范——总览与最小实现、字段表与种子打包规范、客户端与服务端两篇推荐实现。
+- **[文档](/docs/compass/overview)**：Compass Protocol（NCP）v0.9.0 的完整规范——总览与最小实现、字段表与种子打包规范、客户端与服务端两篇推荐实现。
 - **[新闻](/news)**：版本发布、镜像接入公告、工程笔记。
 
 ## 为什么单独建站

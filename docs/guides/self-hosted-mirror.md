@@ -14,7 +14,7 @@ NodeStone 允许多个源同时提供服务。同一个种子在**任何镜像�
 
 ```text
 <源根>/
-└── v08/
+└── v09/
     └── minecraft/
         ├── latest.json
         ├── latest.json.minisig
@@ -23,17 +23,18 @@ NodeStone 允许多个源同时提供服务。同一个种子在**任何镜像�
             └── <torrenthash>.torrent
 ```
 
-版本号 `v08` 是协议路径的一部分（对应 `filetype: "nscl/v0.8"`），不要改动；`<namespace>` 与清单里的 `namespace` 必须一致。
+版本号 `v09` 是协议路径的一部分（对应 `filetype: "nscl/v0.9"`），不要改动；`<namespace>` 与清单里的 `namespace` 必须一致。
 
 ## 2. 构建顺序
 
 1. **抓上游、算哈希**：拉取 Mojang 元数据，真实下载并校验原始字节，计算每个文件的哈希。
 2. **打包 BT v2 种子**（NodeStone Packer）：
-   - `info["meta version"] = 2`，字典 Key 严格按字节序排序；
-   - `info["file tree"]` 第一级目录 = 官方源主机名（小写、无默认端口）；
-   - 顶层写 `ns-schemes`，**不要**写 BEP-19 `url-list`；
+   - `info["meta version"] = 2`，字典 Key 严格按字节序排序，顶层必须含 `piece layers` 字典；
+   - `info["name"]` 为不含 `/` 的纯 ASCII（如 `minecraft-version-1.21.4`）；
+   - `info["file tree"]` 第一级目录 = 官方源主机名（小写、无默认端口），后续层级为**百分号解码后的原始 UTF-8** 路径段；
+   - 在 `info["ns-schemes"]` 写协议头（顶层同步一份做兼容），**不要**写 BEP-19 `url-list`；
    - 写 `announce` / `announce-list`。
-3. **组装 `latest.json`**：`nsci.raw_kv` 只收入口文件映射；`assets.torrents` 写各 Hash 的 `delivery`。
+3. **组装 `latest.json`**：`nsci.raw_kv` 只收录 `version_manifest_v2.json` 与各版本 `<version>.json` 的映射；`assets.torrents` 写各 Hash 的 `delivery`（标准种子务必提供 `delivery.url` 直链）。
 4. **签名**：`minisign -S -s <私钥> -m latest.json`，`trusted comment` 建议写 `namespace:<ns> revision:<n> date:<iso8601>`。
 5. **发布**：**先上传种子**，确认 Seeder 已挂载并处于做种状态，再原子替换 `latest.json` 与 `latest.json.minisig`。
 
@@ -45,9 +46,9 @@ NodeStone 允许多个源同时提供服务。同一个种子在**任何镜像�
 
 | 资源 | 必须 | 禁止 |
 | --- | --- | --- |
-| `version_manifest_v2.json` 等高频变化、无子文件依赖的顶层入口 | `delivery.integrated.type = "raw_file"`，Hash = 文件整体 SHA-256 | 打种子 |
-| `<version>.json`、`<asset_index>.json` 等需要展开子文件索引的入口 | 打包进 BT v2 种子 | 使用 `raw_file` |
-| 已发布不可变的 `client.jar`、`libraries`、`assets` | 按版本核心种子 / 大版本 Assets 种子打包 | 每次发版重建 |
+| `version_manifest_v2.json` 等高频变化、无子文件依赖的顶层入口 | `delivery.integrated.type = "raw_file"`，Hash = 文件整体线性 SHA-256 | 打种子 |
+| `<version>.json` 等需要展开子文件索引的入口 | 打包进该版本的 BT v2 种子 | 使用 `raw_file` |
+| 已发布不可变的 `client.jar`、`libraries`、`<asset_index>.json`、`assets/objects` | 按**单个游戏版本**打成一个全量种子 `minecraft-version-<ver>` | 每次发版重建历史种子，或按大版本聚合 Assets 种子 |
 
 ## 4. 命名空间与修订号
 
