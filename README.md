@@ -42,6 +42,9 @@ static/brand/              品牌资产（字标、方块、favicon 等）
 仓库：[NodeStoneDev/nodestonedev.github.io](https://github.com/NodeStoneDev/nodestonedev.github.io)。
 内容托管在 **Cloudflare Pages** 项目 `nodestone`，对外域名 **https://nodestone.asxz.one/**。
 
+项目是 **Git 集成**（Cloudflare 的 GitHub App 装在 NodeStoneDev 组织上），
+**往 `main` 推一次就自动构建发布**，仓库里不需要部署工作流，也不需要 `CLOUDFLARE_API_TOKEN`。
+
 链路：
 
 ```
@@ -49,18 +52,29 @@ static/brand/              品牌资产（字标、方块、favicon 等）
         → nodestone.pages.dev（Cloudflare Pages，证书由 Cloudflare 签发）
 ```
 
+Pages 项目里的构建参数：
+
+| 项 | 值 |
+| --- | --- |
+| 生产分支 | `main` |
+| 框架预设 | 无 |
+| 构建命令 | `npm run build` |
+| 构建输出目录 | `build` |
+| 根目录 | （空，即仓库根） |
+| 环境变量 | `NODE_VERSION=22`（`engines` 只要求 ≥20，CI 用 22，两边保持一致） |
+
 | 工作流 | 触发 | 动作 |
 | --- | --- | --- |
 | `.github/workflows/ci.yml` | PR、非 `main` 分支 push | `npm ci` → `tsc --noEmit` → `npm run build`，只校验不发布 |
 
-本地发布的步骤（需要已 `wrangler login` 的账号，且该账号有 `pages:write`）：
+- 发布只走 Cloudflare：仓库里原来那个 `deploy.yml`（GitHub Pages）已经删了，`static/CNAME` 也删了；别再加回来，那些只对 GitHub Pages 有意义。
+- 想在本地顶一份（比如临时验证产物）仍可手工上传，会在部署列表里多一条 ad-hoc 记录：
 
 ```bash
 npm run build
 wrangler pages deploy build --project-name=nodestone --branch=main --commit-dirty=true
 ```
 
-- 项目是 **Direct Upload**（没接 Git），所以没有“推 main 自动上线”，要么本地跑上面的命令，要么在 CI 里配 `CLOUDFLARE_API_TOKEN` 后由 Actions 调 wrangler。
 - 改域名要三处同步，否则 sitemap/canonical 指向旧域名：
 
 | 位置 | 当前值 |
@@ -70,8 +84,8 @@ wrangler pages deploy build --project-name=nodestone --branch=main --commit-dirt
 | Pages 项目 → 自定义域 | `nodestone.asxz.one` |
 
 注意：wrangler 登录拿到的 OAuth 令牌只有 `pages:write` 和 `zone:read`，
-**没有 DNS 写权限**，DNS 记录只能在 Cloudflare 控制台改，或另配带 `Zone.DNS:Edit` 的
-API Token。
+**没有 DNS 写权限**（DNS API 返回 `10000 Authentication error`），DNS 记录只能在 Cloudflare
+控制台改，或另配带 `Zone.DNS:Edit` 的 API Token。
 
 ## 内容来源
 
