@@ -1,7 +1,7 @@
 /* 首页样式 —— 与 Brand 视觉识别一致 */
 
-/* hero 是一扇「窗」：自己不铺纸，让 l9 的磁感线波场全强度透上来。
-   窗外的纸面由下面的 section 半透明纸（--ns-veil）负责，很淡。 */
+/* hero 是一扇窗：自己不铺纸，让 l9 波场以全强度透上来。
+   下沿用一条渐隐把它接回正文的半透明纸，避免一刀切的硬边。 */
 .hero {
   position: relative;
   overflow: hidden;
@@ -9,13 +9,10 @@
   background: transparent;
 }
 
-/* 窗框下沿：不画硬边框，用一段渐变把波场收进纸里，读起来才像隔着玻璃 */
 .hero::after {
   content: '';
   position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: auto 0 0 0;
   height: 150px;
   background: linear-gradient(to bottom, var(--ns-veil-clear), var(--ns-veil) 78%);
   pointer-events: none;
@@ -153,10 +150,10 @@
 
 /* ---------- 通用 section ---------- */
 
+/* 正文区铺一层半透明纸，把波场压到「很淡但看得见」 */
 .section {
   position: relative;
   padding: 4.5rem 1.5rem;
-  /* 半透明纸：把波场压到「很淡」，文字底下永远是纸不是水 */
   background: var(--ns-veil);
 }
 
@@ -320,6 +317,55 @@
   color: #aab4c6;
 }
 
+/* ---------- 三步流程 ---------- */
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.2rem;
+}
+
+.step {
+  padding: 1.5rem 1.5rem 1.4rem;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid rgb(34 42 53 / 9%);
+}
+
+[data-theme='dark'] .step {
+  background: #1a2130;
+  border-color: #26303f;
+}
+
+.stepNum {
+  display: inline-block;
+  margin-bottom: 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #5b6ba8;
+}
+
+[data-theme='dark'] .stepNum {
+  color: #94a0c9;
+}
+
+.stepTitle {
+  margin: 0 0 0.5rem;
+  font-size: 1.08rem;
+}
+
+.stepBody {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.75;
+  color: #5a6478;
+}
+
+[data-theme='dark'] .stepBody {
+  color: #aab4c6;
+}
+
 /* ---------- 引用段 ---------- */
 
 .quote {
@@ -340,6 +386,23 @@
 [data-theme='dark'] .quote blockquote {
   background: rgb(148 160 201 / 8%);
   color: #dbe1ec;
+}
+
+.note {
+  margin: 0 0 1.8rem;
+  padding: 1.1rem 1.3rem;
+  border: 1px solid rgb(198 143 32 / 35%);
+  border-radius: 12px;
+  background: rgb(198 143 32 / 8%);
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: #6b5220;
+}
+
+[data-theme='dark'] .note {
+  border-color: rgb(214 168 74 / 30%);
+  background: rgb(214 168 74 / 8%);
+  color: #e0cd9f;
 }
 
 .quoteLinks {
@@ -376,10 +439,8 @@
   }
 }
 
-/* ---------- 正文浮现 ---------- */
+/* ---------- 正文浮现（字标飞行时打开「窗」） ---------- */
 
-/* IntroSplash 在字标起飞的那一刻给 .main-wrapper 打上 data-ns-reveal，
-   这里让 hero 的每一块按顺序浮起来，而不是整页一起淡出淡入。 */
 :global([data-ns-reveal='true']) .heroText > *,
 :global([data-ns-reveal='true']) .heroArt {
   animation: nsRise 0.86s cubic-bezier(0.16, 1, 0.3, 1) both;
