@@ -20,7 +20,7 @@ const config: Config = {
   url: 'https://nodestone.asxz.one',
   baseUrl: '/',
   organizationName: 'NodeStoneDev',
-  projectName: 'nodestonedev.github.io',
+  projectName: 'HomeSite',
   trailingSlash: false,
 
   onBrokenLinks: 'throw',

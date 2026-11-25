@@ -39,7 +39,7 @@ static/brand/              品牌资产（字标、方块、favicon 等）
 
 ## 部署
 
-仓库：[NodeStoneDev/nodestonedev.github.io](https://github.com/NodeStoneDev/nodestonedev.github.io)。
+仓库：[NodeStoneDev/HomeSite](https://github.com/NodeStoneDev/HomeSite)。
 内容托管在 **Cloudflare Pages** 项目 `nodestone`，对外域名 **https://nodestone.asxz.one/**。
 
 项目是 **Git 集成**（Cloudflare 的 GitHub App 装在 NodeStoneDev 组织上），
