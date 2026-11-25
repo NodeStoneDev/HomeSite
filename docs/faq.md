@@ -25,8 +25,8 @@ NodeStone 首先是**分发网络与协议**：一套签名的元数据源（Com
 
 不。协议在传输上只要求「能按 BEP-52 校验分块」。
 
-- 有现成 BT 引擎（`libtorrent-rasterbar`、`rqbit`、`anacrolix/torrent` 等）：按[客户端推荐实现](/docs/compass/client)里的 C-1 方案，用本地 307 路由桥接 WebSeed，零引擎改动。
-- 不想引入 BT 引擎：按 C-2 方案自己实现 Range 请求与 Merkle 校验，SDK 里已经定义了分块对齐规则。
+- 有现成 BT 引擎（`libtorrent-rasterbar`、`rqbit`、`anacrolix/torrent` 等）：按[客户端推荐实现](/docs/compass/client)里的 C-2 方案，改一下引擎的 WebSeed URL 拼接层，让它读 `info["ns-schemes"]` 与 `info["ns-mirrors"]` 直接拼出官方源与镜像源地址。v0.10.0 已移除此前那个本地 307 环回代理方案。
+- 不想改引擎：自己实现 Range 请求与 Merkle 校验，SDK 里已经定义了分块对齐规则。
 
 ## 为什么有的文件没有种子？
 
@@ -44,7 +44,7 @@ NodeStone 首先是**分发网络与协议**：一套签名的元数据源（Com
 
 ## 协议现在稳定吗？
 
-当前是 **v0.9.0**。已经在用的部分（`url:<Base64>` 形式的 NSFID、BT v2 打包、minisign 发布）按稳定接口对待；明确标注「未来预留」的部分（`sha256:<Hex>` 形式的 NSFID、正则路由表）不保证兼容。变更记录见[版本历史](/docs/compass/changelog)。
+当前是 **v0.10.0**。已经在用的部分（`url:<Base64>` 形式的 NSFID、BT v2 打包、minisign 发布）按稳定接口对待；明确标注「未来预留」的部分（`sha256:<Hex>` 形式的 NSFID、正则路由表）不保证兼容。变更记录见[版本历史](/docs/compass/changelog)。
 
 ## 我可以自己架镜像源吗？
 

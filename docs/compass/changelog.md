@@ -6,9 +6,23 @@ description: NodeStone Compass Protocol (NCP) 的历史版本与变更要点。
 
 # 版本历史
 
+## v0.10.0 — 2026-11-25
+
+当前版本。这一版重新梳理了种子目录结构与 WebSeed 拼接方式：新增镜像源映射字段，删掉本地代理方案，并把打包颗粒度改回大版本全量包。
+
+- **新增 `info["ns-mirrors"]` 镜像源映射**：`dict<string, list<string>>`，Key 为 `info["file tree"]` 第一级的官方源主机名（如 `libraries.minecraft.net`），Value 是该主机的镜像 URL 前缀列表，可把 `libraries.minecraft.net`、`resources.download.minecraft.net`、`piston-meta.mojang.com`、`piston-data.mojang.com` 映射到 BMCLAPI。与 `ns-schemes` 同放 `info` 内，受 InfoHash v2 完整性保护，也能经 BEP-9 `ut_metadata` 传输。
+- **移除 C-1 本地 307 代理，统一 C-2 引擎 URL 拼接**：客户端只保留修改 BT 引擎 URL 拼接层这一条路——识别 `info["ns-schemes"]` 与 `info["ns-mirrors"]` 后跳过 `info["name"]` 层级，按首层 `<host>[:<port>]` 直接拼出官方源与镜像源的 WebSeed URL。未修改的普通 BT 客户端仍走标准 BEP-19 `url-list`（官方源）。
+- **恢复大版本全量种子与可变机制**：打包颗粒度从 v0.9.0 的「一个游戏版本一个不可变种子」改回 `minecraft-1.20-full`、`minecraft-1.21-full` 这类大版本全量包。种子可变，服务端重新打包后更新 `latest.json` 并从 `assets.torrents` 移除旧 Hash。
+- **拉取 `latest.json` 即淘汰过期种子**：客户端每次拉清单都删除 `nsci_cache` 与 `torrents_state` 中不在 `latest.assets.torrents` 里的 `torrenthash` 记录，磁盘上的旧 `.torrent` 异步清理。三张表之间不需要外键级联或引用计数。
+- **下载前必须先进版本 Manifest**：请求任意版本前必须先取得该版本的 `<version>.json` 与 `<asset_index>.json`，因此 `nsGetFile` / `nsGetFilesBatch` 移除了 `contextEntryNSFIDs` 参数。
+- **路径构造补上原因说明**：`info["file tree"]` 第一级为 `<host>[:<port>]`，后续各级是百分号解码后的原始 UTF-8 路径段——不能预编码，否则 `libtorrent` 的 `escape_path` 会把 `%` 二次转义成 `%25`，还原出的 URL 会 404。
+- **路径版本号升到 `v010`**：清单路径为 `<源>/v010/<namespace>/latest.json`，`filetype` 固定为 `"nscl/v0.10"`。
+- **文档表述精简**：URL 规范化与 Base64 直接引用 RFC 3986 Section 6.2.2 与 RFC 4648，删去重复罗列；去掉「协议强制约束」「零修改」「四步自愈闭环」这类修饰。
+- **修正规范示例**：`PROTOCOL_SPECIFICATION.md` §4 的 `raw_file` 示例 SHA-256 更正为 `e64db0fde59206a0cf85c783e644f5e2ffd6a519dbf7d720cc9e5b0ace3d46a4`（payload `"eyJ2ZXJzaW9ucyI6W119"` 即 `{"versions":[]}`）。
+
 ## v0.9.0 — 2026-11-22
 
-当前版本。这一版把打包颗粒度从「版本核心 + 大版本 Assets」收敛为**每个游戏版本一个不可变种子**，并把 URL 还原、WebSeed 桥接与本地缓存的细节写成了可实现的规格。
+这一版把打包颗粒度从「版本核心 + 大版本 Assets」收敛为**每个游戏版本一个不可变种子**，并把 URL 还原、WebSeed 桥接与本地缓存的细节写成了可实现的规格。
 
 - **打包颗粒度改为按游戏版本**：新的 `minecraft-version-<ver>` 种子一次性包含该版本的 `<version>.json`、`client.jar`、全部 `libraries`、对应的 `<asset_index>.json` 与全部 `assets/objects`（`.torrent` 约 300 KB）。取消按大版本聚合的 Assets 种子，彻底消除「小版本发布导致历史种子重打包」的复杂度。
 - **`nsci.raw_kv` 精简为两个入口**：只收录 `version_manifest_v2.json` 与各版本 `<version>.json`。`<asset_index>.json` 不再单独收录——它作为版本种子的子文件，在展开时自动写入本地缓存。
@@ -37,5 +51,5 @@ description: NodeStone Compass Protocol (NCP) 的历史版本与变更要点。
 
 协议层预留但不启用的两项能力：
 
-- **`sha256:<Hex>` 形式的 NSFID**：BT v2 的 `pieces root` 是按 16 KiB 分块的 Merkle 根，不等于文件整体 SHA-256，因此 v0.9.0 暂不启用，只保留格式。
+- **`sha256:<Hex>` 形式的 NSFID**：BT v2 的 `pieces root` 是按 16 KiB 分块的 Merkle 根，不等于文件整体 SHA-256，因此 v0.10.0 暂不启用，只保留格式。
 - **正则路由表**：用于进一步压缩 `latest.json` 体积，仅作为查找入口时的匹配规则，**不作为 NSFID**；命中后写入缓存的仍必须是真实映射。

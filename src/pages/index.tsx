@@ -49,7 +49,7 @@ const layers = [
   {
     tag: 'NCP',
     title: '开放协议',
-    body: 'NodeStone Compass Protocol：清单格式、NSFID 文件标识、种子打包规范与校验规则的公开约定，当前 v0.9.0，Apache-2.0。',
+    body: 'NodeStone Compass Protocol：清单格式、NSFID 文件标识、种子打包规范与校验规则的公开约定，当前 v0.10.0，Apache-2.0。',
     to: '/docs/compass/protocol',
   },
   {
