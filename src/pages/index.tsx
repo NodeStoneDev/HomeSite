@@ -84,8 +84,7 @@ export default function Home(): ReactNode {
     <Layout
       title="NodeStone —— 把 Minecraft 资源交给节点分发"
       description="NodeStone 是一套面向 Minecraft 生态的开源资源分发网络：轻量签名索引 + BitTorrent v2 内容分发 + 节点互助。">
-      <header className={styles.hero}>
-        <div className={styles.grid} aria-hidden="true" />
+      <header className={styles.hero} data-ns-hero="">
         <div className={styles.heroInner}>
           <div className={styles.heroText}>
             <p className={styles.eyebrow}>

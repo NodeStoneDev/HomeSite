@@ -36,10 +36,21 @@
   --ifm-global-radius: 10px;
   --ifm-background-color: #ffffff;
   --ifm-background-surface-color: var(--ns-paper);
+  --ifm-navbar-background-color: rgb(255 255 255 / 0.72);
   --ifm-navbar-shadow: 0 1px 0 rgb(34 42 53 / 8%);
   --ifm-toc-border-color: var(--ns-paper-deep);
   --ifm-footer-background-color: var(--ns-dark);
   --docusaurus-highlighted-code-line-bg: rgb(91 107 168 / 12%);
+
+  /* ---- 磁感线波场（l9）----
+     页面真正的底色画在 <html> 上，<body> 透明，z-index:-1 的波场才透得上来。
+     --ns-veil 就是「纸」：波场被它压住，全站都很淡；首页 hero 不铺纸，所以是全强度。 */
+  --ns-page: var(--ns-paper);
+  --ns-veil: rgb(255 255 255 / 0.885);
+  --ns-veil-alt: rgb(247 249 251 / 0.9);
+  --ns-veil-clear: rgb(255 255 255 / 0);
+  --ns-field-dot: #6b7a90;
+  --ns-field-crest: #5b6ba8;
 }
 
 [data-theme='dark'] {
@@ -53,17 +64,32 @@
 
   --ifm-background-color: var(--ns-dark-deep);
   --ifm-background-surface-color: var(--ns-dark);
-  --ifm-navbar-background-color: var(--ns-dark);
+  --ifm-navbar-background-color: rgb(26 33 48 / 0.74);
   --ifm-footer-background-color: #0f141d;
   --ifm-toc-border-color: #26303f;
   --docusaurus-highlighted-code-line-bg: rgb(148 160 201 / 18%);
+
+  /* 暗色下的纸与浪：对比收一点，否则满屏亮点 */
+  --ns-page: var(--ns-dark-deep);
+  --ns-veil: rgb(15 20 28 / 0.86);
+  --ns-veil-alt: rgb(26 33 48 / 0.9);
+  --ns-veil-clear: rgb(15 20 28 / 0);
+  --ns-field-dot: #93a0b6;
+  --ns-field-crest: #94a0c9;
 }
 
 /* ---------- 基础排版 ---------- */
 
+/* 底色画在 <html>（会铺到浏览器画布），<body> 必须透明，
+   否则 z-index:-1 的波场层会被 body 的背景整块挡住。 */
 html {
+  background: var(--ns-page);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+body {
+  background: transparent;
 }
 
 h1,
@@ -202,9 +228,27 @@ blockquote {
 
 /* ---------- 开场动画（IntroSplash） ---------- */
 
-/* 正文的淡入由组件在浮现时刻内联切换 opacity / transform；这里只给过渡曲线 */
+/* 正文的淡入由组件在浮现时刻内联切换 opacity / transform；这里只给过渡曲线。
+   顶栏与页脚同理——开场时三块一起藏起来，浮现时一起淡入。 */
+.main-wrapper,
+.navbar,
+.footer {
+  transition: opacity 0.72s ease;
+}
+
 .main-wrapper {
   transition: opacity 0.72s ease, transform 0.72s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 全站默认铺一层半透明纸，磁感线波场透上来只有很淡的一层。
+   首页 hero 是一扇窗（body:has([data-ns-hero])），整页纸交给各 section 自己铺，
+   这样 hero 才能以全强度看见 l9。 */
+.main-wrapper {
+  background: var(--ns-veil);
+}
+
+body:has([data-ns-hero]) .main-wrapper {
+  background: transparent;
 }
 
 /* ---------- 页脚 ---------- */

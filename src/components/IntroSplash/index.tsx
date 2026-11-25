@@ -2,15 +2,23 @@ import {useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import NodestoneLogo from '@site/src/components/NodestoneLogo';
 import styles from './styles.module.css';
 
-/** 开场动画阶段：底纹 → 打字机 → 星图入场 → 飞到顶栏左上角 → 卸载 */
+/** 开场动画阶段：起风 → 打字机 → 星图入场 → 飞到顶栏左上角 → 卸载 */
 type Phase = 'boot' | 'typing' | 'logo' | 'fly' | 'done';
 
 const WORD_LENGTH = 9; // NODESTONE
 const CHAR_MS = 90;
 const BOOT_MS = 480;
+/** 褪掉遮罩纸色的时刻：波场第一帧已经画上，越早越像「背景本来就在那儿」 */
+const PAPER_MS = 160;
 const HOLD_MS = 300;
 const LOGO_MS = 1350;
 const FLY_MS = 900;
+
+/**
+ * 开场期间要藏起来的外壳。它们是各自独立的兄弟节点，得一起藏、一起淡入，
+ * 否则透明遮罩下面会露出顶栏、公告条和页脚。
+ */
+const APP_SELECTOR = '.navbar, .main-wrapper, .footer, [class*="announcementBar"]';
 
 type SavedStyle = {el: HTMLElement; css: string};
 
@@ -18,12 +26,13 @@ export default function IntroSplash(): React.ReactNode {
   const [phase, setPhase] = useState<Phase>('boot');
   const [typed, setTyped] = useState(0);
   const [revealed, setRevealed] = useState(false);
+  const [bootCleared, setBootCleared] = useState(false);
   const [flyTransform, setFlyTransform] = useState('');
 
   const boxRef = useRef<HTMLDivElement>(null);
   const timers = useRef<number[]>([]);
   const saved = useRef<SavedStyle[]>([]);
-  const mainRef = useRef<HTMLElement | null>(null);
+  const appNodes = useRef<HTMLElement[]>([]);
 
   /** 把某个元素的 style 属性原样存下来，收尾时恢复 */
   const stash = (el: HTMLElement | null) => {
@@ -51,12 +60,19 @@ export default function IntroSplash(): React.ReactNode {
   }, [restore]);
 
   const startFly = useCallback(() => {
-    // 正文与底纹此刻交叉淡入淡出
+    // 正文与波场此刻交叉淡入淡出：正文浮起来，波场退到「窗外」的浓度
     setRevealed(true);
-    const main = mainRef.current;
+    const nodes = appNodes.current;
+    nodes.forEach((el) => {
+      // 交回 CSS 里的过渡曲线，正文是「浮现」，不是瞬间出现
+      el.style.transition = '';
+      el.style.opacity = '1';
+    });
+    const main = nodes.find((el) => el.classList.contains('main-wrapper'));
     if (main) {
-      main.style.opacity = '1';
       main.style.transform = 'none';
+      // 让首页的分层浮现从这一刻开始计时（纯属性，不碰 <html class>）
+      main.setAttribute('data-ns-reveal', 'true');
     }
 
     const box = boxRef.current;
@@ -81,7 +97,8 @@ export default function IntroSplash(): React.ReactNode {
     timers.current.push(window.setTimeout(finish, FLY_MS + 220));
   }, [finish]);
 
-  // 遮罩就位 + 隐藏正文（遮罩本身不透明，正文此时在下面，只为浮现时能淡入）
+  // 遮罩就位 + 藏起外壳（遮罩此刻还是不透明的纸色，避免首屏闪出正文；
+  // 等波场画上第一帧后再把纸色褪掉，波场就自然「显影」出来）
   useLayoutEffect(() => {
     // <head> 里的内联脚本正常会在首帧前注入这条样式；没有（被 CSP 拦掉等）就自己补上
     if (!document.getElementById('ns-intro-boot')) {
@@ -91,15 +108,20 @@ export default function IntroSplash(): React.ReactNode {
       document.head.appendChild(style);
     }
 
-    const main = document.querySelector<HTMLElement>('.main-wrapper');
-    const logo = document.querySelector<HTMLElement>('.navbar__logo');
-    mainRef.current = main;
-    stash(main);
-    stash(logo);
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>(APP_SELECTOR));
+    appNodes.current = nodes;
+    nodes.forEach((el) => {
+      stash(el);
+      // 藏起来这一步必须是瞬时的：否则遮罩下面能看见正文自己慢慢淡出
+      el.style.transition = 'none';
+      el.style.opacity = '0';
+    });
+    const main = nodes.find((el) => el.classList.contains('main-wrapper'));
     if (main) {
-      main.style.opacity = '0';
       main.style.transform = 'translateY(10px)';
     }
+    const logo = document.querySelector<HTMLElement>('.navbar__logo');
+    stash(logo);
     if (logo) {
       logo.style.opacity = '0';
     }
@@ -118,6 +140,8 @@ export default function IntroSplash(): React.ReactNode {
       timers.current.push(window.setTimeout(fn, ms));
     };
     const typingEnd = BOOT_MS + WORD_LENGTH * CHAR_MS + HOLD_MS;
+    // 纸色先褪（露出 l9），打字机随后才开始（l1）
+    at(PAPER_MS, () => setBootCleared(true));
     at(BOOT_MS, () => setPhase('typing'));
     at(typingEnd, () => setPhase('logo'));
     at(typingEnd + LOGO_MS, startFly);
@@ -150,9 +174,9 @@ export default function IntroSplash(): React.ReactNode {
       className={styles.splash}
       data-ns-splash=""
       data-phase={phase}
+      data-boot={bootCleared ? 'clear' : 'sealed'}
       data-reveal={revealed ? 'true' : 'false'}
       aria-hidden="true">
-      <NodestoneLogo layout="lattice" className={styles.grid} />
       <div className={styles.stage}>
         <div
           ref={boxRef}

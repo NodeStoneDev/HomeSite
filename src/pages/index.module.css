@@ -1,39 +1,24 @@
 /* 首页样式 —— 与 Brand 视觉识别一致 */
 
+/* hero 是一扇「窗」：自己不铺纸，让 l9 的磁感线波场全强度透上来。
+   窗外的纸面由下面的 section 半透明纸（--ns-veil）负责，很淡。 */
 .hero {
   position: relative;
   overflow: hidden;
   padding: 5.5rem 1.5rem 4.5rem;
-  background: linear-gradient(160deg, #f7f9fb 0%, #e6e9ee 100%);
-  border-bottom: 1px solid rgb(34 42 53 / 8%);
+  background: transparent;
 }
 
-[data-theme='dark'] .hero {
-  background: linear-gradient(160deg, #1a2130 0%, #141a26 100%);
-  border-bottom-color: #26303f;
-}
-
-/* 磁感线网格底纹：45° 斜向细线 */
-.grid {
+/* 窗框下沿：不画硬边框，用一段渐变把波场收进纸里，读起来才像隔着玻璃 */
+.hero::after {
+  content: '';
   position: absolute;
-  inset: -20%;
-  background-image: repeating-linear-gradient(
-      45deg,
-      rgb(100 116 140 / 10%) 0 1px,
-      transparent 1px 22px
-    ),
-    repeating-linear-gradient(-45deg, rgb(100 116 140 / 10%) 0 1px, transparent 1px 22px);
-  mask-image: radial-gradient(circle at 50% 45%, #000 0%, transparent 72%);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 150px;
+  background: linear-gradient(to bottom, var(--ns-veil-clear), var(--ns-veil) 78%);
   pointer-events: none;
-}
-
-[data-theme='dark'] .grid {
-  background-image: repeating-linear-gradient(
-      45deg,
-      rgb(167 178 196 / 12%) 0 1px,
-      transparent 1px 22px
-    ),
-    repeating-linear-gradient(-45deg, rgb(167 178 196 / 12%) 0 1px, transparent 1px 22px);
 }
 
 .heroInner {
@@ -169,17 +154,19 @@
 /* ---------- 通用 section ---------- */
 
 .section {
+  position: relative;
   padding: 4.5rem 1.5rem;
+  /* 半透明纸：把波场压到「很淡」，文字底下永远是纸不是水 */
+  background: var(--ns-veil);
 }
 
 .sectionAlt {
-  background: #f7f9fb;
+  background: var(--ns-veil-alt);
   border-top: 1px solid rgb(34 42 53 / 6%);
   border-bottom: 1px solid rgb(34 42 53 / 6%);
 }
 
 [data-theme='dark'] .sectionAlt {
-  background: #1a2130;
   border-color: #26303f;
 }
 
@@ -386,5 +373,50 @@
 
   .section {
     padding: 3rem 1.25rem;
+  }
+}
+
+/* ---------- 正文浮现 ---------- */
+
+/* IntroSplash 在字标起飞的那一刻给 .main-wrapper 打上 data-ns-reveal，
+   这里让 hero 的每一块按顺序浮起来，而不是整页一起淡出淡入。 */
+:global([data-ns-reveal='true']) .heroText > *,
+:global([data-ns-reveal='true']) .heroArt {
+  animation: nsRise 0.86s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+:global([data-ns-reveal='true']) .heroText > *:nth-child(1) {
+  animation-delay: 0.06s;
+}
+
+:global([data-ns-reveal='true']) .heroText > *:nth-child(2) {
+  animation-delay: 0.13s;
+}
+
+:global([data-ns-reveal='true']) .heroText > *:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+:global([data-ns-reveal='true']) .heroText > *:nth-child(4) {
+  animation-delay: 0.27s;
+}
+
+:global([data-ns-reveal='true']) .heroText > *:nth-child(5) {
+  animation-delay: 0.34s;
+}
+
+:global([data-ns-reveal='true']) .heroArt {
+  animation-delay: 0.22s;
+}
+
+@keyframes nsRise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
   }
 }

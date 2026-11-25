@@ -1,0 +1,18 @@
+/* 磁感线波场层（l9）。全局类名 ns-field，与品牌组件的 ns- 前缀保持一套。 */
+
+.ns-field {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  contain: layout paint;
+  /* 波场永远在最底，任何正文/纸张层都压在它上面 */
+  isolation: isolate;
+}
+
+.ns-field__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
