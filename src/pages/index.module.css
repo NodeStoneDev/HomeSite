@@ -333,6 +333,55 @@
   color: #aab4c6;
 }
 
+/* ---------- 三步流程 ---------- */
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.2rem;
+}
+
+.step {
+  padding: 1.5rem 1.5rem 1.4rem;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid rgb(34 42 53 / 9%);
+}
+
+[data-theme='dark'] .step {
+  background: #1a2130;
+  border-color: #26303f;
+}
+
+.stepNum {
+  display: inline-block;
+  margin-bottom: 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #5b6ba8;
+}
+
+[data-theme='dark'] .stepNum {
+  color: #94a0c9;
+}
+
+.stepTitle {
+  margin: 0 0 0.5rem;
+  font-size: 1.08rem;
+}
+
+.stepBody {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.75;
+  color: #5a6478;
+}
+
+[data-theme='dark'] .stepBody {
+  color: #aab4c6;
+}
+
 /* ---------- 引用段 ---------- */
 
 .quote {
@@ -353,6 +402,23 @@
 [data-theme='dark'] .quote blockquote {
   background: rgb(148 160 201 / 8%);
   color: #dbe1ec;
+}
+
+.note {
+  margin: 0 0 1.8rem;
+  padding: 1.1rem 1.3rem;
+  border: 1px solid rgb(198 143 32 / 35%);
+  border-radius: 12px;
+  background: rgb(198 143 32 / 8%);
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: #6b5220;
+}
+
+[data-theme='dark'] .note {
+  border-color: rgb(214 168 74 / 30%);
+  background: rgb(214 168 74 / 8%);
+  color: #e0cd9f;
 }
 
 .quoteLinks {
